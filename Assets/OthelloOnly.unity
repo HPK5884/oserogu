@@ -174,7 +174,6 @@ MonoBehaviour:
   ScoreBoard: {fileID: 1798105283}
   ScoreBoardText: {fileID: 777422580}
   Template: {fileID: 927732287}
-  TurnText: {fileID: 0}
   BoardSize: 8
   PlayerChipColors:
   - {r: 1, g: 1, b: 1, a: 0}
@@ -189,6 +188,7 @@ MonoBehaviour:
   - {x: 0, y: 1}
   - {x: -1, y: 1}
   - {x: -1, y: 0}
+  RetryButton: {fileID: 0}
 --- !u!222 &545523001
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -772,8 +772,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 545522999}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: InitializeBoard
+        m_TargetAssemblyTypeName: OthelloBoard, Assembly-CSharp
+        m_MethodName: Retry
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
