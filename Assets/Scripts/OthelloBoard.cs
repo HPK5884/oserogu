@@ -174,7 +174,7 @@ public class OthelloBoard : MonoBehaviour {
                 OthelloCells[x, y].GetComponent<Button>().interactable = true;
             }
         }
-    }
+    }// 追加
     private int CountScoreFor(int owner)
     {
         int count = 0;
