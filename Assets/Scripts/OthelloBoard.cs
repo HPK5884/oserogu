@@ -90,6 +90,9 @@ public class OthelloBoard : MonoBehaviour {
         OthelloCells[4, 4].OwnerID = 0;
         OthelloCells[4, 3].OwnerID = 1;
         OthelloCells[3, 4].OwnerID = 1;
+
+        UpdatePlaceableCells(); // 駒を置けるマスを更新
+}
     }
 
     // 指定した場所にチップを置けるか確認するメソッド
@@ -163,51 +166,7 @@ public class OthelloBoard : MonoBehaviour {
         }
     }
 
-    // ターンを終了するメソッド
-    internal void EndTurn(bool isAlreadyEnded)
-    {        
-        CurrentTurn = EnemyID;// ターンを切り替える
-
-        // 置ける場所があるか確認
-        for (int y = 0; y < BoardSize; y++)
-        {
-            for (int x = 0; x < BoardSize; x++)
-            {
-                if (CanPlaceHere(new Vector2(x, y)))
-                {
-                    return;
-                }
-            }
-        }
-
-        // 置ける場所がない場合、ゲームオーバーを確認
-        if (isAlreadyEnded)
-            GameOver();
-        else {
-            EndTurn(true);
-        }            
-    }
-
-// 駒を置けるマスを判定するメソッド
-private List<Vector2> GetPlaceableCells()
-{
-    List<Vector2> placeableCells = new List<Vector2>();
-    for (int y = 0; y < BoardSize; y++)
-    {
-        for (int x = 0; x < BoardSize; x++)
-        {
-            Vector2 location = new Vector2(x, y);
-            if (CanPlaceHere(location))
-            {
-                placeableCells.Add(location);
-            }
-        }
-    }
-    return placeableCells;
-}
-
-// 駒を置けるマスに色をつけるメソッド
-private void HighlightPlaceableCells()
+    private void HighlightPlaceableCells()
 {
     List<Vector2> placeableCells = GetPlaceableCells();
     foreach (Vector2 cell in placeableCells)
@@ -228,51 +187,39 @@ private void ResetCellColors()
     }
 }
 
-public void Retry()// 追加
-{
-    InitializeGame();// ゲームを初期化
-    ScoreBoard.gameObject.SetActive(false);// スコアボードを非表示にする
-
-    // 全てのセルをアクティブにする
-    for (int y = 0; y < BoardSize; y++)
+    private void UpdatePlaceableCells()
     {
-        for (int x = 0; x < BoardSize; x++)
-        {
-            OthelloCells[x, y].GetComponent<Button>().interactable = true;
-        }
-    }
-
     ResetCellColors(); // セルの色をリセット
     HighlightPlaceableCells(); // 駒を置けるマスに色をつける
-}// 追加
+    }
 
-// ...existing code...
+    // ターンを終了するメソッド
+    internal void EndTurn(bool isAlreadyEnded)
+    {        
+        CurrentTurn = EnemyID;// ターンを切り替える
 
-internal void EndTurn(bool isAlreadyEnded)
-{
-    CurrentTurn = EnemyID;// ターンを切り替える
-
-    // 置ける場所があるか確認
-    for (int y = 0; y < BoardSize; y++)
-    {
-        for (int x = 0; x < BoardSize; x++)
+        // 置ける場所があるか確認
+        for (int y = 0; y < BoardSize; y++)
         {
-            if (CanPlaceHere(new Vector2(x, y)))
+            for (int x = 0; x < BoardSize; x++)
             {
-                ResetCellColors(); // セルの色をリセット
-                HighlightPlaceableCells(); // 駒を置けるマスに色をつける
-                return;
+                if (CanPlaceHere(new Vector2(x, y)))
+                {
+                    UpdatePlaceableCells(); // 駒を置けるマスを更新
+                    ResetCellColors(); // セルの色をリセット
+                    HighlightPlaceableCells(); // 駒を置けるマスに色をつける
+                    return;
+                }
             }
         }
-    }
 
-    // 置ける場所がない場合、ゲームオーバーを確認
-    if (isAlreadyEnded)
-        GameOver();
-    else {
-        EndTurn(true);
+        // 置ける場所がない場合、ゲームオーバーを確認
+        if (isAlreadyEnded)
+            GameOver();
+        else {
+            EndTurn(true);
+        }            
     }
-}
 
     // ゲームオーバー時の処理
     public void GameOver()
@@ -314,6 +261,8 @@ internal void EndTurn(bool isAlreadyEnded)
                 OthelloCells[x, y].GetComponent<Button>().interactable = true;
             }
         }
+        ResetCellColors(); // セルの色をリセット
+        HighlightPlaceableCells(); // 駒を置けるマスに色をつける
     }// 追加
 
     // 指定したプレイヤーのスコアを計算するメソッド
