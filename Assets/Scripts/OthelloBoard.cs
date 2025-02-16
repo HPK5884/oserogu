@@ -188,6 +188,92 @@ public class OthelloBoard : MonoBehaviour {
         }            
     }
 
+// 駒を置けるマスを判定するメソッド
+private List<Vector2> GetPlaceableCells()
+{
+    List<Vector2> placeableCells = new List<Vector2>();
+    for (int y = 0; y < BoardSize; y++)
+    {
+        for (int x = 0; x < BoardSize; x++)
+        {
+            Vector2 location = new Vector2(x, y);
+            if (CanPlaceHere(location))
+            {
+                placeableCells.Add(location);
+            }
+        }
+    }
+    return placeableCells;
+}
+
+// 駒を置けるマスに色をつけるメソッド
+private void HighlightPlaceableCells()
+{
+    List<Vector2> placeableCells = GetPlaceableCells();
+    foreach (Vector2 cell in placeableCells)
+    {
+        OthelloCells[(int)cell.x, (int)cell.y].GetComponent<Image>().color = Color.green;
+    }
+}
+
+// 駒を置けるマスの色をリセットするメソッド
+private void ResetCellColors()
+{
+    for (int y = 0; y < BoardSize; y++)
+    {
+        for (int x = 0; x < BoardSize; x++)
+        {
+            OthelloCells[x, y].GetComponent<Image>().color = Color.white;
+        }
+    }
+}
+
+public void Retry()// 追加
+{
+    InitializeGame();// ゲームを初期化
+    ScoreBoard.gameObject.SetActive(false);// スコアボードを非表示にする
+
+    // 全てのセルをアクティブにする
+    for (int y = 0; y < BoardSize; y++)
+    {
+        for (int x = 0; x < BoardSize; x++)
+        {
+            OthelloCells[x, y].GetComponent<Button>().interactable = true;
+        }
+    }
+
+    ResetCellColors(); // セルの色をリセット
+    HighlightPlaceableCells(); // 駒を置けるマスに色をつける
+}// 追加
+
+// ...existing code...
+
+internal void EndTurn(bool isAlreadyEnded)
+{
+    CurrentTurn = EnemyID;// ターンを切り替える
+
+    // 置ける場所があるか確認
+    for (int y = 0; y < BoardSize; y++)
+    {
+        for (int x = 0; x < BoardSize; x++)
+        {
+            if (CanPlaceHere(new Vector2(x, y)))
+            {
+                ResetCellColors(); // セルの色をリセット
+                HighlightPlaceableCells(); // 駒を置けるマスに色をつける
+                return;
+            }
+        }
+    }
+
+    // 置ける場所がない場合、ゲームオーバーを確認
+    if (isAlreadyEnded)
+        GameOver();
+    else {
+        EndTurn(true);
+    }
+}
+
     // ゲームオーバー時の処理
     public void GameOver()
     {
